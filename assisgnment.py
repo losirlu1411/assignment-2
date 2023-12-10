@@ -16,7 +16,7 @@ def read_data(filename):
     # Set the index and select specific countries and years
     data1.index = data1.iloc[:, 0]
     data1 = data1.iloc[:, 1:]
-    countries = ["China", "India", "Russian Federation","Brazil","Indonesia", "United States","South Africa"]
+    countries = ["China", "India","Brazil","Indonesia", "United States","South Africa"]
     years = ['1990','1991', '1992','1993','1994','1995','1996','1997','1998','1999' ,'2000','2001', '2002', '2003', '2004','2005']
     data1 = data1.loc[countries, years]
 
@@ -24,6 +24,18 @@ def read_data(filename):
     data1_t = data1.T
     data1_t.index = data1_t.index.astype(int)
     return data1, data1_t
+
+
+def print_describe_statics(title,data_state):
+    print("======="+title+'=======')
+    print("---describe------")
+    print(data_state.describe())
+    print("-----skew-------")
+    print(data_state.skew())
+    print("-----kurtosis------")
+    print(data_state.kurtosis())
+    print()
+    
 
 def  bar(df,xlbl,ylbl,title):
     years = [1990, 1995, 2000, 2005]
@@ -41,8 +53,6 @@ def  bar(df,xlbl,ylbl,title):
     for ii in df_filter.index:
         offset = width * multiplier
         reacts = ax.bar(x + offset, df_filter.loc[ii].values.flatten(), width, label=ii)
-        #rects = ax.bar(x + offset, measurement, width, label=attribute)
-       # ax.bar_label(rects, padding=3)
         multiplier += 1
 
     # Add some text for labels, title and custom x-axis tick labels, etc.
@@ -54,6 +64,16 @@ def  bar(df,xlbl,ylbl,title):
 
 
     plt.show()
+    
+    
+def plot_line(data_path,title,ylabel,xlabel):
+    plt.figure(figsize=(10, 6))
+   # plt.plot(data_path["Year"], data_path["India"],label="India")
+    data_path.plot()
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(title)
+    plt.legend()
 
 def heat(country,df1,df2,df3,df4,df5,df6):
     dt_corr = pd.DataFrame()
@@ -89,9 +109,14 @@ data5, data5_t =  read_data("API_AG.LND.ARBL.ZS_DS2_en_csv_v2_5995308.csv")
 data6, data6_t =  read_data("API_AG.LND.FRST.ZS_DS2_en_csv_v2_5994693.csv")
 
 
+
 bar(data_t,'Years','Methane Emission (KT)','Methane Emission by Countries and Years' )
 bar(data2_t,'Years','Agriculture Methane Emission (KT)',\
     'Agriculture Methane Emission by Countries and Years')
+plot_line(data6_t,'Forest Land','Years',"xl")    
 heat("India",data,data2,data3,data4,data5,data6)
 heat("Brazil",data,data2,data3,data4,data5,data6)
 heat("China",data,data2,data3,data4,data5,data6)
+
+print_describe_statics("methane",data_t)
+plt.show()
