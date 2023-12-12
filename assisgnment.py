@@ -34,10 +34,9 @@ def read_data(filename):
     # Set the index and select specific countries and years
     data1.index = data1.iloc[:, 0]
     data1 = data1.iloc[:, 1:]
-    countries = ["China", "India", "Brazil", "Indonesia", "United States",
-                 "South Africa"]
-    years = ['1990', '1991', '1992', '1993', '1994', '1995', '1996', '1997',
-             '1998', '1999', '2000', '2001', '2002', '2003', '2004', '2005']
+    countries = ["China", "United States","India", "Brazil","South Africa","Japan", "Germany"]
+    years = np.arange(1990,2020).astype("str") #   ['1990', '1991', '1992', '1993', '1994', '1995', '1996', '1997',
+             #'1998', '1999', '2000', '2001', '2002', '2003', '2004', '2005']
     data1 = data1.loc[countries, years]
 
     # Transpose the data for easier plotting
@@ -158,6 +157,8 @@ def plot_line(data_path, title, ylabel, xlabel):
     # plot the figure size
     plt.figure(figsize=(10, 6))
     # Plot the specified line type
+    print(title)
+    print(data_path)
     data_path.plot(linestyle='--')
     # plot the x label,y label and title
     plt.xlabel(xlabel)
@@ -170,7 +171,7 @@ def plot_line(data_path, title, ylabel, xlabel):
     plt.show()
 
 
-def heat(country, df1, df2, df3, df4, df5, df6):
+def heat(country, df1, df2, df3, df4, df5, df6,df7,df8):
     """
     It will produce correlation heatmap for specified country and indicators
 
@@ -199,13 +200,17 @@ def heat(country, df1, df2, df3, df4, df5, df6):
     # plot the correlation heat map
     dt_corr = pd.DataFrame()
     dt_corr["Methane (KT)"] = df1.loc[country, :].values
-    dt_corr["Agriculture Methane"] = df2.loc[country, :].values
+    dt_corr["Revenue"] = df2.loc[country, :].values
     dt_corr["Urban Population"] = df3.loc[country, :].values
     dt_corr["Agriculture Land"] = df4.loc[country, :].values
     dt_corr["Arable land"] = df5.loc[country, :].values
-    dt_corr["Forest Land"] = df6.loc[country, :].values
+    dt_corr["Forest land"] = df6.loc[country, :].values
+    dt_corr["Gdp"] = df7.loc[country, :].values
+    dt_corr["Electricity"] = df8.loc[country, :].values
+    
+    
     # correlation calculating
-    corr = dt_corr.corr().round(3)
+    corr = dt_corr.corr().round(2)
     # plot the figure size
     plt.figure()
     # plot the colour map
@@ -228,23 +233,26 @@ def heat(country, df1, df2, df3, df4, df5, df6):
 ########### Main ##########
 # Load the csv files
 data, data_t = read_data("API_EN.ATM.METH.KT.CE_DS2_en_csv_v2_5995564.csv")
-data2, data2_t = read_data("API_EN.ATM.METH.AG.ZS_DS2_en_csv_v2_5995573.csv")
+data2, data2_t = read_data("API_GC.REV.XGRT.GD.ZS_DS2_en_csv_v2_6235008.csv")
 data3, data3_t = read_data("API_SP.URB.TOTL.IN.ZS_DS2_en_csv_v2_5996759.csv")
 data4, data4_t = read_data("API_AG.LND.AGRI.ZS_DS2_en_csv_v2_5995314.csv")
 data5, data5_t = read_data("API_AG.LND.ARBL.ZS_DS2_en_csv_v2_5995308.csv")
 data6, data6_t = read_data("API_AG.LND.FRST.ZS_DS2_en_csv_v2_5994693.csv")
+data7, data7_t = read_data("API_NY.GDP.MKTP.CD_DS2_en_csv_v2_6224532.csv")
+data8, data8_t = read_data("API_EG.USE.ELEC.KH.PC_DS2_en_csv_v2_6229098.csv")
+
 # Print all the bar plot
 bar_plot(data_t, 'Years', 'Methane Emission (KT)',
          'Methane Emission by Countries and Years')
-bar_plot(data2_t, 'Years', 'Agriculture Methane Emission (KT)',
-         'Agriculture Methane Emission by Countries and Years')
+bar_plot(data3_t, 'Years', 'Urban population (% of total population)',
+         'Urban  Population')
 # Print all the line plot
-plot_line(data6_t, 'Forest Land', 'Forest area (% of land area)', 'Years')
-plot_line(data3_t, 'Urban Land', 'Urban population (% of total population)',
-          'Years')
-# Print  all the heat map
-heat("India", data, data2, data3, data4, data5, data6)
-heat("Brazil", data, data2, data3, data4, data5, data6)
-heat("China", data, data2, data3, data4, data5, data6)
+plot_line(data6_t, 'Forest Land', 'Forest area (% of land area)','Years')
+plot_line(data5_t, 'Arable Land', 'Arable land (% of land area','Years')
+print()
+# Print   all the heat map
+heat("India", data, data2, data3, data4, data5, data6,data7,data8)
+heat("Brazil", data, data2, data3, data4, data5, data6,data7,data8)
+heat("China", data, data2, data3, data4, data5, data6,data7,data8)
 # print  all the Stastical Method
 print_describe_statics("methane", data_t)
