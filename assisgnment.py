@@ -7,7 +7,7 @@ Created on Wed Nov 29 19:56:32 2023
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-
+import scipy.stats as sk
 
 def read_data(filename):
     '''
@@ -35,8 +35,7 @@ def read_data(filename):
     data1.index = data1.iloc[:, 0]
     data1 = data1.iloc[:, 1:]
     countries = ["China", "United States","India", "Brazil","South Africa","Japan", "Germany"]
-    years = np.arange(1990,2020).astype("str") #   ['1990', '1991', '1992', '1993', '1994', '1995', '1996', '1997',
-             #'1998', '1999', '2000', '2001', '2002', '2003', '2004', '2005']
+    years = np.arange(1990,2020).astype("str")
     data1 = data1.loc[countries, years]
 
     # Transpose the data for easier plotting
@@ -71,10 +70,12 @@ def print_describe_statics(title, data_state):
     print(data_state.describe())
     # return skewness
     print("-----skewness-------")
-    print(data_state.skew())
+    rev = pd.DataFrame(sk.skew(data_state),index=data_state.columns,columns=[""])
+    print(rev)
     # Return Kurtosis
     print("-----kurtosis------")
-    print(data_state.kurtosis())
+    rep = pd.DataFrame(sk.kurtosis(data_state),index=data_state.columns,columns=[""])
+    print(rep)
     # Return Median
     print("-----Median------")
     print(data_state.median())
@@ -207,8 +208,8 @@ def heat(country, df1, df2, df3, df4, df5, df6,df7,df8):
     dt_corr["Forest land"] = df6.loc[country, :].values
     dt_corr["Gdp"] = df7.loc[country, :].values
     dt_corr["Electricity"] = df8.loc[country, :].values
-    
-    
+
+
     # correlation calculating
     corr = dt_corr.corr().round(2)
     # plot the figure size
@@ -242,13 +243,13 @@ data7, data7_t = read_data("API_NY.GDP.MKTP.CD_DS2_en_csv_v2_6224532.csv")
 data8, data8_t = read_data("API_EG.USE.ELEC.KH.PC_DS2_en_csv_v2_6229098.csv")
 
 # Print all the bar plot
-bar_plot(data_t, 'Years', 'Methane Emission (KT)',
+bar_plot(data_t, 'Country', 'Methane Emission (KT)',
          'Methane Emission by Countries and Years')
-bar_plot(data3_t, 'Years', 'Urban population (% of total population)',
+bar_plot(data3_t, 'Country', 'Urban population (% of total population)',
          'Urban  Population')
 # Print all the line plot
-plot_line(data6_t, 'Forest Land', 'Forest area (% of land area)','Years')
-plot_line(data5_t, 'Arable Land', 'Arable land (% of land area','Years')
+plot_line(data6_t, 'Forest Land', 'Forest area (% of land area)','Year')
+plot_line(data5_t, 'Arable Land', 'Arable land (% of land area','Year')
 print()
 # Print   all the heat map
 heat("India", data, data2, data3, data4, data5, data6,data7,data8)
